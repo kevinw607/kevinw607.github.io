@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Agendar Cita</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #eef2f5;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #0066cc;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    main {
+      max-width: 600px;
+      margin: 30px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    select, input[type="date"], input[type="time"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin-top: 30px;
+      background-color: #0066cc;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #004c99;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Agendar Cita</h1>
+</header>
+
+<main>
+  <form id="form-cita">
+    <label for="especialidad">Especialidad</label>
+    <select id="especialidad" required onchange="cargarDoctores()">
+      <option value="">Seleccione una especialidad</option>
+      <option value="cardiologia">Cardiología</option>
+      <option value="medicina_general">Medicina General</option>
+      <option value="dermatologia">Dermatología</option>
+    </select>
+
+    <label for="doctor">Doctor</label>
+    <select id="doctor" required>
+      <option value="">Seleccione un doctor</option>
+    </select>
+
+    <label for="fecha">Fecha</label>
+    <input type="date" id="fecha" required />
+
+    <label for="hora">Hora</label>
+    <input type="time" id="hora" required />
+
+    <button type="submit">Agendar</button>
+  </form>
+</main>
+
+<script>
+  const doctoresPorEspecialidad = {
+    cardiologia: ["Dr. Guzman", "Dr. Ruiz"],
+    medicina_general: ["Dr. Mansilla", "Dr. Vargas"],
+    dermatologia: ["Dr. Del Rio", "Dr. Delgado"]
+  };
+
+  function cargarDoctores() {
+    const especialidad = document.getElementById("especialidad").value;
+    const doctorSelect = document.getElementById("doctor");
+    doctorSelect.innerHTML = '<option value="">Seleccione un doctor</option>';
+
+    if (especialidad && doctoresPorEspecialidad[especialidad]) {
+      doctoresPorEspecialidad[especialidad].forEach(doctor => {
+        const option = document.createElement("option");
+        option.value = doctor;
+        option.textContent = doctor;
+        doctorSelect.appendChild(option);
+      });
+    }
+  }
+
+  document.getElementById("form-cita").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const especialidad = document.getElementById("especialidad").value;
+    const doctor = document.getElementById("doctor").value;
+    const fecha = document.getElementById("fecha").value;
+    const hora = document.getElementById("hora").value;
+
+    if (especialidad && doctor && fecha && hora) {
+      const nuevaCita = {
+        especialidad,
+        doctor,
+        fecha,
+        hora
+      };
+
+      let citas = JSON.parse(localStorage.getItem("citas")) || [];
+      citas.push(nuevaCita);
+      localStorage.setItem("citas", JSON.stringify(citas));
+
+      alert(`Cita agendada con ${doctor} el ${fecha} a las ${hora}.`);
+      window.location.href = "panel.html"; 
+    }
+  });
+</script>
+
+</body>
+</html>
